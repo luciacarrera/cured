@@ -33,7 +33,7 @@ const NAIL_MATERIAL = new THREE.MeshPhysicalMaterial({
   side: THREE.DoubleSide,
 })
 
-const SKIN_MATERIAL = new THREE.MeshStandardMaterial({ color: '#efc3ad', roughness: 0.75 })
+const SKIN_MATERIAL = new THREE.MeshStandardMaterial({ color: '#89cff0', roughness: 0.75 })
 
 export function NailScene({ finger, nail, mode, rotateFrom }: Props) {
   const size = useDesign((s) => s.sizes[finger])

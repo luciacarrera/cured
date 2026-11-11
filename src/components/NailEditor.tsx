@@ -209,7 +209,7 @@ export function NailEditor({ finger, nail }: Props) {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-center gap-3 px-4 pt-4 sm:px-6">
+      <header className="flex flex-wrap items-center gap-3 px-4 pt-5 sm:px-6 sm:pt-6">
         <div className="flex items-center gap-3">
           <button
             type="button"

@@ -29,7 +29,7 @@ const LEFT_HAND: FingerGeom[] = [
   { name: 'thumb', x: 68, y: -60, angle: 38, length: 118, width: 36 },
 ]
 
-const SKIN = '#efc6b2'
+const SKIN = '#89cff0'
 
 const PALM =
   'M -52 120 C -54 40 -78 -60 -76 -140 C -74 -182 -40 -200 10 -200 ' +
@@ -40,7 +40,7 @@ function fingerPath(w: number, L: number) {
   return `M ${-w / 2} 24 L ${-t} ${-L + t} A ${t} ${t} 0 0 1 ${t} ${-L + t} L ${w / 2} 24 Z`
 }
 
-const CREASE = '#c99a86'
+const CREASE = '#4f6c9c'
 
 /**
  * Middle (proximal inter-phalangeal) joint on the back of the finger: a soft
@@ -217,12 +217,12 @@ export function HandsIllustration({ designs, nail, onSelect, hint }: Props) {
           <stop offset="1" stopColor="#fdf1ee" />
         </linearGradient>
         <radialGradient id="joint-shade">
-          <stop offset="0" stopColor="#d9a28d" stopOpacity="0.35" />
-          <stop offset="1" stopColor="#d9a28d" stopOpacity="0" />
+          <stop offset="0" stopColor="#5fb8ec" stopOpacity="0.35" />
+          <stop offset="1" stopColor="#5fb8ec" stopOpacity="0" />
         </radialGradient>
         <radialGradient id="knuckle-light" cy="0.4">
-          <stop offset="0" stopColor="#f5d3c3" stopOpacity="0.55" />
-          <stop offset="1" stopColor="#f5d3c3" stopOpacity="0" />
+          <stop offset="0" stopColor="#cfe9ff" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#cfe9ff" stopOpacity="0" />
         </radialGradient>
         <filter id="hand-shadow" x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#3a9ad9" floodOpacity="0.22" />
@@ -234,7 +234,7 @@ export function HandsIllustration({ designs, nail, onSelect, hint }: Props) {
         <text
           textAnchor="middle"
           fontSize={22}
-          className="pointer-events-none fill-navy-500 font-display max-sm:hidden"
+          className="pointer-events-none fill-navy-500 font-pixel max-sm:hidden"
         >
           {hint.map((line, i) => (
             <tspan key={i} x={0} y={HINT_Y + i * HINT_LINE_HEIGHT}>
