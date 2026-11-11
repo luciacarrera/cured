@@ -30,8 +30,12 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
   return (
     <div className="flex h-full flex-col">
       <header className="flex flex-col items-center gap-2 px-6 pt-10 text-center">
-        <h1 className="font-display text-7xl font-medium italic tracking-tight text-cocoa-700">cured</h1>
-        <p className="max-w-md text-cocoa-500">
+        <h1 className="flex items-center gap-3 font-display text-7xl font-bold tracking-tight">
+          <span className="sparkle text-3xl" aria-hidden>✦</span>
+          <span className="y2k-chrome-text" data-text="cured">cured</span>
+          <span className="sparkle text-2xl" aria-hidden>✧</span>
+        </h1>
+        <p className="max-w-md text-navy-500">
           Tap a nail to decorate it. When every nail is done, export one print-ready STL.
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
@@ -39,9 +43,9 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
             type="button"
             onClick={onExport}
             disabled={busy || !nail}
-            className="rounded-full bg-rose-400 px-6 py-3 font-medium text-white shadow-lg shadow-rose-200 transition hover:bg-rose-500 disabled:opacity-50"
+            className="y2k-gloss rounded-full px-6 py-3 font-display font-semibold disabled:opacity-50"
           >
-            {busy ? 'Building STL…' : 'Finish & export STL'}
+            <span className="y2k-chrome-label">{busy ? 'Building STL…' : 'Finish & export STL'}</span>
           </button>
           {totalCharms > 0 && (
             <button
@@ -49,13 +53,13 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
               onClick={() => {
                 if (confirm('Remove every charm from all ten nails?')) clearAll()
               }}
-              className="rounded-full px-4 py-3 text-sm text-cocoa-500 transition hover:bg-white/70"
+              className="rounded-full px-4 py-3 text-sm text-navy-500 transition hover:bg-white/70"
             >
               Start over
             </button>
           )}
         </div>
-        <p className="text-sm text-cocoa-400">
+        <p className="font-pixel text-xl tracking-wide text-navy-400">
           {decorated} of 10 nails decorated · {totalCharms} charm{totalCharms === 1 ? '' : 's'}
         </p>
         {error && <p className="text-sm text-rose-600">{error}</p>}

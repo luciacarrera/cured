@@ -122,7 +122,7 @@ export function HandsIllustration({ designs, nail, onSelect }: Props) {
               <path
                 d={nailS.path}
                 fill="url(#nail)"
-                stroke={active ? '#d9507a' : '#e7b9b0'}
+                stroke={active ? '#3a9ad9' : '#e7b9b0'}
                 strokeWidth={active ? 2.2 : 1}
                 style={{ transition: 'stroke 150ms, stroke-width 150ms' }}
               />
@@ -165,7 +165,7 @@ export function HandsIllustration({ designs, nail, onSelect }: Props) {
           <stop offset="1" stopColor="#fdf1ee" />
         </linearGradient>
         <filter id="hand-shadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#a0685a" floodOpacity="0.18" />
+          <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#3a9ad9" floodOpacity="0.22" />
         </filter>
       </defs>
       {renderHand('left')}
