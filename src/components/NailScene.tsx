@@ -130,11 +130,11 @@ export function NailScene({ finger, nail, mode }: Props) {
 
       <ambientLight intensity={0.5} />
       <directionalLight position={[20, 40, -10]} intensity={1.6} />
-      <directionalLight position={[-25, 20, 30]} intensity={0.6} color="#ffe6ee" />
+      <directionalLight position={[-25, 20, 30]} intensity={0.6} color="#dff1ff" />
       {/* Studio reflections built locally (no HDR download needed). */}
       <Environment resolution={64} environmentIntensity={0.7}>
         <Lightformer form="rect" intensity={3} position={[0, 10, 0]} rotation-x={Math.PI / 2} scale={[20, 20, 1]} />
-        <Lightformer form="rect" intensity={1.5} color="#ffd6e4" position={[-10, 2, 0]} rotation-y={Math.PI / 2} scale={[20, 6, 1]} />
+        <Lightformer form="rect" intensity={1.5} color="#bfe3ff" position={[-10, 2, 0]} rotation-y={Math.PI / 2} scale={[20, 6, 1]} />
         <Lightformer form="rect" intensity={1.5} position={[10, 2, -5]} rotation-y={-Math.PI / 2} scale={[20, 6, 1]} />
       </Environment>
 
@@ -213,7 +213,7 @@ function CharmMesh({ charm, nailScale, selected, onPointerDown }: CharmMeshProps
         roughness={def.roughness}
         flatShading={def.flatShading}
         clearcoat={0.6}
-        emissive={selected ? '#ff4f8b' : '#000000'}
+        emissive={selected ? '#5fb8ec' : '#000000'}
         emissiveIntensity={selected ? 0.35 : 0}
         side={THREE.DoubleSide}
       />

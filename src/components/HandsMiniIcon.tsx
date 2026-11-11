@@ -42,7 +42,7 @@ export function HandsMiniIcon({ active, className, decorative }: Props) {
     const transform = h === 'left' ? 'translate(-15 0)' : 'translate(15 0) scale(-1 1)'
     return (
       <g transform={transform}>
-        <path d={PALM} className="fill-blush-100 stroke-cocoa-400" strokeWidth={0.9} />
+        <path d={PALM} className="fill-white stroke-navy-400" strokeWidth={0.9} />
         {LEFT.map((f) => {
           const on = `${prefix}-${f.name}` === active
           return (
@@ -54,7 +54,7 @@ export function HandsMiniIcon({ active, className, decorative }: Props) {
               height={f.length + 2}
               rx={f.width / 2}
               transform={`translate(${f.x} ${f.y}) rotate(${f.angle})`}
-              className={on ? 'fill-rose-400 stroke-rose-500' : 'fill-blush-100 stroke-cocoa-400'}
+              className={on ? 'fill-baby-400 stroke-navy-600' : 'fill-white stroke-navy-400'}
               strokeWidth={0.9}
             />
           )

@@ -7,13 +7,12 @@ import { centerHit, viewRegistry, type ViewMode } from '../three/viewRegistry'
 import type { CharmType, FingerId } from '../types'
 import { CharmControls } from './CharmControls'
 import { CHARM_MIME, CharmPalette } from './CharmPalette'
+import { ConfirmDialog } from './ConfirmDialog'
 import { HandsMiniIcon } from './HandsMiniIcon'
 import { NailScene } from './NailScene'
 
 const PANEL_KEY = 'cured-charm-panel-open'
 const PANEL_ID = 'charms-panel'
-const FOCUS_RING =
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600'
 
 /** Open by default on wide screens, collapsed on phones; remembers the last choice. */
 function initialPanelOpen() {
@@ -40,6 +39,7 @@ export function NailEditor({ finger, nail }: Props) {
   const clearFinger = useDesign((s) => s.clearFinger)
   const count = useDesign((s) => s.designs[finger].length)
   const [hint, setHint] = useState<string | null>(null)
+  const [confirmClear, setConfirmClear] = useState(false)
   const [panelOpen, setPanelOpenState] = useState(initialPanelOpen)
 
   // When the user opens/closes the panel, move keyboard focus with it so it isn't lost.
@@ -79,7 +79,7 @@ export function NailEditor({ finger, nail }: Props) {
 
   const pane = (mode: ViewMode, title: string, overlay?: ReactNode) => (
     <section
-      className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-blush-200 bg-gradient-to-b from-white to-blush-50 shadow-inner"
+      className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-chrome bg-gradient-to-b from-white to-baby-50 shadow-[inset_0_2px_12px_rgb(58_154_217_/_0.15)]"
       onDragOver={(e) => {
         if (e.dataTransfer.types.includes(CHARM_MIME)) {
           e.preventDefault()
@@ -95,7 +95,7 @@ export function NailEditor({ finger, nail }: Props) {
         else flash('Drop the charm right on the nail')
       }}
     >
-      <span className="pointer-events-none absolute left-4 top-3 z-10 text-xs font-medium uppercase tracking-[0.2em] text-cocoa-400">
+      <span className="pointer-events-none absolute left-4 top-3 z-10 font-pixel text-lg uppercase tracking-[0.2em] text-navy-400">
         {title}
       </span>
       <Canvas
@@ -117,18 +117,15 @@ export function NailEditor({ finger, nail }: Props) {
         // Escape closes the panel, unless it's being used to deselect a charm.
         if (e.key === 'Escape' && !selectedId) setPanelOpen(false)
       }}
-      className="absolute bottom-3 right-3 top-3 z-20 flex w-60 max-w-[calc(100%-1.5rem)] flex-col rounded-2xl border border-blush-200 bg-white/90 shadow-lg backdrop-blur"
+      className="y2k-glass absolute bottom-3 right-3 top-3 z-20 flex w-60 max-w-[calc(100%-1.5rem)] flex-col rounded-2xl"
       // Dropping onto the panel itself shouldn't place a charm on the nail hidden behind it.
       onDragOver={(e) => e.stopPropagation()}
       onDrop={(e) => e.stopPropagation()}
     >
       <div className="flex items-center justify-between px-4 pb-2 pt-3">
-        <h3
-          id="charms-heading"
-          className="text-xs font-medium uppercase tracking-[0.2em] text-cocoa-600"
-        >
+        <h2 id="charms-heading" className="font-pixel text-lg uppercase tracking-[0.2em] text-navy-600">
           Charms
-        </h3>
+        </h2>
         <button
           ref={closeButtonRef}
           type="button"
@@ -137,14 +134,14 @@ export function NailEditor({ finger, nail }: Props) {
           aria-expanded
           aria-controls={PANEL_ID}
           title="Hide charms"
-          className={`-mr-2 flex h-9 w-9 items-center justify-center rounded-full text-xl leading-none text-cocoa-600 transition hover:bg-blush-100 hover:text-rose-600 ${FOCUS_RING}`}
+          className="-mr-2 flex h-9 w-9 items-center justify-center rounded-full text-xl leading-none text-navy-600 transition hover:bg-baby-100"
         >
           <span aria-hidden>×</span>
         </button>
       </div>
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4">
         <CharmPalette onTapAdd={tapAdd} />
-        <div className="border-t border-blush-200 pt-3">
+        <div className="border-t border-chrome pt-3">
           <CharmControls finger={finger} />
         </div>
       </div>
@@ -157,10 +154,12 @@ export function NailEditor({ finger, nail }: Props) {
       aria-expanded={false}
       aria-controls={PANEL_ID}
       title="Show charms"
-      className={`absolute right-3 top-3 z-20 flex min-h-11 items-center gap-2 rounded-full border border-blush-200 bg-white/90 px-4 py-2 text-sm font-medium text-cocoa-600 shadow-md backdrop-blur transition hover:border-rose-300 hover:text-rose-600 ${FOCUS_RING}`}
+      className="y2k-gloss absolute right-3 top-3 z-20 flex min-h-11 items-center gap-2 rounded-full px-4 py-2 font-display text-sm font-semibold"
     >
-      <span aria-hidden>✦</span>
-      Charms
+      <span aria-hidden className="text-navy-600">
+        ✦
+      </span>
+      <span className="y2k-chrome-label">Charms</span>
     </button>
   )
 
@@ -173,28 +172,32 @@ export function NailEditor({ finger, nail }: Props) {
             onClick={backToHands}
             title="Back to hands"
             aria-label="Back to hands"
-            className={`rounded-xl p-1 transition hover:bg-white/70 motion-safe:hover:scale-105 ${FOCUS_RING}`}
+            className="rounded-xl p-1 transition hover:bg-white/70 motion-safe:hover:scale-105"
           >
             <HandsMiniIcon active={finger} decorative className="h-9 w-auto" />
           </button>
-          <h1 className="font-display text-3xl capitalize text-cocoa-700">{info.label}</h1>
+          <h1 className="font-display text-4xl font-bold capitalize tracking-wide">
+            <span className="y2k-chrome-text" data-text={info.label}>
+              {info.label}
+            </span>
+          </h1>
         </div>
-        <div className="ml-auto flex items-center gap-2 text-sm">
+        <div className="ml-auto flex items-center gap-1 text-sm">
           {count > 0 && (
             <button
               type="button"
-              onClick={() => clearFinger(finger)}
-              className={`min-h-11 rounded-full px-3 py-2 text-rose-600 transition hover:bg-rose-50 ${FOCUS_RING}`}
+              onClick={() => setConfirmClear(true)}
+              className="min-h-11 rounded-full px-3 py-2.5 text-sm text-rose-600 transition hover:bg-rose-50 sm:px-4 sm:py-3"
             >
-              Clear nail
+              Reset
             </button>
           )}
           <button
             type="button"
             onClick={() => saveFinger(finger)}
-            className={`rounded-full bg-rose-400 px-4 py-2.5 text-sm font-medium whitespace-nowrap text-white shadow-lg shadow-rose-200 transition hover:bg-rose-500 sm:px-6 sm:py-3 sm:text-base ${FOCUS_RING}`}
+            className="y2k-gloss rounded-full px-4 py-2.5 font-display text-sm font-semibold whitespace-nowrap sm:px-6 sm:py-3 sm:text-base"
           >
-            Save nail
+            <span className="y2k-chrome-label">Save nail</span>
           </button>
         </div>
       </header>
@@ -209,10 +212,22 @@ export function NailEditor({ finger, nail }: Props) {
           className="pointer-events-none absolute left-1/2 top-8 z-30 -translate-x-1/2"
         >
           {hint && (
-            <div className="rounded-full bg-cocoa-700/90 px-4 py-2 text-sm text-white">{hint}</div>
+            <div className="rounded-full bg-navy-700/90 px-4 py-2 text-sm text-white">{hint}</div>
           )}
         </div>
       </main>
+
+      <ConfirmDialog
+        open={confirmClear}
+        title="Reset this nail?"
+        message={`This removes ${count === 1 ? 'the 1 charm' : `all ${count} charms`} from your ${info.label.toLowerCase()} nail.`}
+        confirmLabel="Reset"
+        onConfirm={() => {
+          clearFinger(finger)
+          setConfirmClear(false)
+        }}
+        onCancel={() => setConfirmClear(false)}
+      />
     </div>
   )
 }

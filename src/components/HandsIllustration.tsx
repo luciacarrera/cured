@@ -174,7 +174,7 @@ export function HandsIllustration({ designs, nail, onSelect, hint }: Props) {
               <path
                 d={nailS.path}
                 fill="url(#nail)"
-                stroke={active ? '#d9507a' : '#e7b9b0'}
+                stroke={active ? '#3a9ad9' : '#e7b9b0'}
                 strokeWidth={active ? 2.2 : 1}
                 style={{ transition: 'stroke 150ms, stroke-width 150ms' }}
               />
@@ -225,7 +225,7 @@ export function HandsIllustration({ designs, nail, onSelect, hint }: Props) {
           <stop offset="1" stopColor="#f5d3c3" stopOpacity="0" />
         </radialGradient>
         <filter id="hand-shadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#a0685a" floodOpacity="0.18" />
+          <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#3a9ad9" floodOpacity="0.22" />
         </filter>
       </defs>
       {renderHand('left')}
@@ -234,7 +234,7 @@ export function HandsIllustration({ designs, nail, onSelect, hint }: Props) {
         <text
           textAnchor="middle"
           fontSize={22}
-          className="pointer-events-none fill-cocoa-500 font-display italic max-sm:hidden"
+          className="pointer-events-none fill-navy-500 font-display max-sm:hidden"
         >
           {hint.map((line, i) => (
             <tspan key={i} x={0} y={HINT_Y + i * HINT_LINE_HEIGHT}>
