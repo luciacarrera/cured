@@ -12,13 +12,15 @@ import { useDesign } from '../store/designStore'
 import { charmDef, charmGeometry } from '../three/charms'
 import { nailScale, type NailBase } from '../three/loadNail'
 import { charmMatrix, hitToLocal, type SurfaceHit } from '../three/placement'
-import { centerHit, viewRegistry, type ViewMode } from '../three/viewRegistry'
+import { centerHit, screenHit, type FixedView, type ViewMode } from '../three/viewRegistry'
 import type { FingerId, PlacedCharm } from '../types'
 
 interface Props {
   finger: FingerId
   nail: NailBase
   mode: ViewMode
+  /** Preset angle that free rotation starts from. */
+  rotateFrom: FixedView
 }
 
 const NAIL_MATERIAL = new THREE.MeshPhysicalMaterial({
@@ -33,7 +35,7 @@ const NAIL_MATERIAL = new THREE.MeshPhysicalMaterial({
 
 const SKIN_MATERIAL = new THREE.MeshStandardMaterial({ color: '#efc3ad', roughness: 0.75 })
 
-export function NailScene({ finger, nail, mode }: Props) {
+export function NailScene({ finger, nail, mode, rotateFrom }: Props) {
   const size = useDesign((s) => s.sizes[finger])
   const charms = useDesign((s) => s.designs[finger])
   const selectedId = useDesign((s) => s.selectedCharmId)
@@ -43,6 +45,7 @@ export function NailScene({ finger, nail, mode }: Props) {
   const scale = useMemo(() => nailScale(nail, size), [nail, size])
   const W = nail.width * scale.x
   const L = nail.length * scale.z
+  const H = nail.height * scale.y
 
   const nailRef = useRef<THREE.Mesh>(null)
   const { camera, gl, controls } = useThree()
@@ -65,20 +68,18 @@ export function NailScene({ finger, nail, mode }: Props) {
   }
 
   useEffect(() => {
-    viewRegistry[mode] = castFromClient
-    if (mode === 'top') {
-      centerHit.fn = () => {
-        const mesh = nailRef.current
-        if (!mesh) return null
-        // Straight down onto the nail, a little toward the cuticle from centre.
-        raycaster.set(new THREE.Vector3(0, 100, L * 0.08), new THREE.Vector3(0, -1, 0))
-        const hit = raycaster.intersectObject(mesh, false)[0]
-        return hit ? hitToLocal(hit, raycaster.ray) : null
-      }
+    screenHit.fn = castFromClient
+    centerHit.fn = () => {
+      const mesh = nailRef.current
+      if (!mesh) return null
+      // Straight down onto the nail, a little toward the cuticle from centre.
+      raycaster.set(new THREE.Vector3(0, 100, L * 0.08), new THREE.Vector3(0, -1, 0))
+      const hit = raycaster.intersectObject(mesh, false)[0]
+      return hit ? hitToLocal(hit, raycaster.ray) : null
     }
     return () => {
-      if (viewRegistry[mode] === castFromClient) delete viewRegistry[mode]
-      if (mode === 'top') centerHit.fn = null
+      if (screenHit.fn === castFromClient) screenHit.fn = null
+      centerHit.fn = null
     }
   })
 
@@ -116,16 +117,17 @@ export function NailScene({ finger, nail, mode }: Props) {
 
   return (
     <>
-      {mode === 'perspective' ? (
-        <>
-          <PerspectiveCamera makeDefault fov={35} position={[L * 1.3, L * 1.05, -L * 1.25]} near={0.5} far={1000} />
-          <OrbitControls makeDefault target={[0, 0.5, 0]} minDistance={L * 0.6} maxDistance={L * 5} />
-        </>
+      {mode === 'rotate' ? (
+        <group key={`rotate-${rotateFrom}`}>
+          <PerspectiveCamera makeDefault fov={35} position={rotateStart(rotateFrom, L, H)} near={0.5} far={1000} />
+          <OrbitControls makeDefault target={[0, H / 2, 0]} minDistance={L * 0.6} maxDistance={L * 5} />
+        </group>
       ) : (
-        <>
-          <TopCamera W={W} L={L} />
-          <OrbitControls makeDefault enableRotate={false} target={[0, 0, 0]} />
-        </>
+        // Keyed so each view button resets the camera and any zoom/pan.
+        <group key={mode}>
+          <OrthoViewCamera view={mode} W={W} L={L} H={H} />
+          <OrbitControls makeDefault enableRotate={false} target={[0, mode === 'top' || mode === 'bottom' ? 0 : H / 2, 0]} />
+        </group>
       )}
 
       <ambientLight intensity={0.5} />
@@ -164,23 +166,84 @@ export function NailScene({ finger, nail, mode }: Props) {
   )
 }
 
-function TopCamera({ W, L }: { W: number; L: number }) {
+type Vec = [number, number, number]
+/** How far the side cameras are raised above the nail, so its top surface shows. */
+const SIDE_ELEVATION = THREE.MathUtils.degToRad(35)
+/** How far the side cameras swing round toward the free edge, so the finger recedes diagonally. */
+const SIDE_AZIMUTH = THREE.MathUtils.degToRad(40)
+const sideDir = (side: 1 | -1): Vec => [
+  side * Math.cos(SIDE_ELEVATION) * Math.cos(SIDE_AZIMUTH),
+  Math.sin(SIDE_ELEVATION),
+  -Math.cos(SIDE_ELEVATION) * Math.sin(SIDE_AZIMUTH),
+]
+
+const ORTHO_VIEWS: Record<FixedView, { dir: Vec; up: Vec }> = {
+  // Looking down, free edge toward the top of the screen.
+  top: { dir: [0, 1, 0], up: [0, 0, -1] },
+  // Three-quarter views from each side, above and toward the free edge. On the right the
+  // finger comes in from the upper left; the left view mirrors it (upper right).
+  left: { dir: sideDir(-1), up: [0, 1, 0] },
+  right: { dir: sideDir(1), up: [0, 1, 0] },
+  // Looking up from underneath (a true view, so mirrored relative to top).
+  bottom: { dir: [0, -1, 0], up: [0, 0, -1] },
+}
+
+/**
+ * Where the free-rotation camera starts: along the same direction as the preset that was
+ * showing, at a distance that frames the nail. Straight up/down are nudged slightly so the
+ * orbit has a defined heading and the free edge stays toward the top of the screen.
+ */
+function rotateStart(from: FixedView, L: number, H: number): Vec {
+  const nudge = from === 'top' ? 0.02 : from === 'bottom' ? -0.02 : 0
+  const [x, y, z] = ORTHO_VIEWS[from].dir
+  const d = new THREE.Vector3(x, y, z + nudge).normalize().multiplyScalar(L * 2.1)
+  return [d.x, d.y + H / 2, d.z]
+}
+
+/** Ortho zoom that fits a W×H×L box, seen along `dir`, into a width×height screen area. */
+function fitZoom(dir: Vec, up: Vec, [W, H, L]: Vec, width: number, height: number) {
+  const back = new THREE.Vector3(...dir).normalize()
+  const right = new THREE.Vector3(...up).cross(back).normalize()
+  const screenUp = back.clone().cross(right)
+  const extent = (axis: THREE.Vector3) =>
+    Math.abs(axis.x) * W + Math.abs(axis.y) * H + Math.abs(axis.z) * L
+  return Math.min(width / extent(right), height / extent(screenUp))
+}
+
+function OrthoViewCamera({
+  view,
+  W,
+  L,
+  H,
+}: {
+  view: FixedView
+  W: number
+  L: number
+  H: number
+}) {
   const size = useThree((s) => s.size)
   const ref = useRef<THREE.OrthographicCamera>(null)
-  const zoom = Math.min(size.height / (L * 1.35), size.width / (W * 3.2))
+  const { dir, up } = ORTHO_VIEWS[view]
+  const D = 80
+  // Fit the nail with some breathing room; side views leave space above for charms.
+  const zoom =
+    view === 'top' || view === 'bottom'
+      ? Math.min(size.height / (L * 1.35), size.width / (W * 3.2))
+      : fitZoom(dir, up, [W, H, L], size.width / 1.6, size.height / 1.6)
+  const target: Vec = [0, view === 'top' || view === 'bottom' ? 0 : H / 2, 0]
   useEffect(() => {
     const cam = ref.current
     if (!cam) return
     cam.zoom = zoom
-    cam.lookAt(0, 0, 0)
+    cam.lookAt(...target)
     cam.updateProjectionMatrix()
-  }, [zoom])
+  }, [zoom, view, H])
   return (
     <OrthographicCamera
       ref={ref}
       makeDefault
-      position={[0, 80, 0]}
-      up={[0, 0, -1]}
+      position={[dir[0] * D + target[0], dir[1] * D + target[1], dir[2] * D + target[2]]}
+      up={up}
       zoom={zoom}
       near={0.1}
       far={500}

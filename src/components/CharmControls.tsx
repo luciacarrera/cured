@@ -27,8 +27,7 @@ export function CharmControls({ finger }: { finger: FingerId }) {
   if (!charm) {
     return (
       <p className="text-sm text-navy-500">
-        Drag a charm onto the nail in either view. Click a placed charm to select it, drag it to
-        move.
+        Drag a charm onto the nail. Click a placed charm to select it, drag it to move.
       </p>
     )
   }
