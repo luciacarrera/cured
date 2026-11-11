@@ -24,19 +24,20 @@ export function CharmControls({ finger }: { finger: FingerId }) {
 
   if (!charm) {
     return (
-      <p className="text-center text-sm text-cocoa-500">
-        Drag a charm onto the nail in either view. Click a charm to select it, drag it to move.
+      <p className="text-sm text-cocoa-500">
+        Drag a charm onto the nail in either view. Click a placed charm to select it, drag it to
+        move.
       </p>
     )
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-cocoa-600">
+    <div className="flex flex-col gap-3 text-sm text-cocoa-600">
       <span className="flex items-center gap-2 font-medium">
         <CharmIcon type={charm.type} className="h-6 w-6" />
         {charmDef(charm.type).label}
       </span>
-      <label className="flex items-center gap-2">
+      <label className="flex items-center justify-between gap-2">
         Size
         <input
           type="range"
@@ -45,10 +46,10 @@ export function CharmControls({ finger }: { finger: FingerId }) {
           step={0.05}
           value={charm.scale}
           onChange={(e) => updateCharm(finger, charm.id, { scale: Number(e.target.value) })}
-          className="w-28 accent-rose-400"
+          className="w-32 accent-rose-500 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rose-600"
         />
       </label>
-      <label className="flex items-center gap-2">
+      <label className="flex items-center justify-between gap-2">
         Rotate
         <input
           type="range"
@@ -57,13 +58,13 @@ export function CharmControls({ finger }: { finger: FingerId }) {
           step={1}
           value={charm.spin}
           onChange={(e) => updateCharm(finger, charm.id, { spin: Number(e.target.value) })}
-          className="w-28 accent-rose-400"
+          className="w-32 accent-rose-500 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rose-600"
         />
       </label>
       <button
         type="button"
         onClick={() => removeCharm(finger, charm.id)}
-        className="rounded-full border border-rose-200 px-3 py-1 text-rose-500 transition hover:bg-rose-50"
+        className="self-start rounded-full border border-rose-300 px-4 py-2 text-rose-600 transition hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600"
       >
         Remove
       </button>

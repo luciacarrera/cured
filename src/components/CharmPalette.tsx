@@ -11,7 +11,7 @@ interface Props {
 
 export function CharmPalette({ onTapAdd }: Props) {
   return (
-    <div className="flex gap-2 overflow-x-auto px-4 py-3 sm:justify-center">
+    <div className="grid grid-cols-2 gap-2">
       {CHARMS.map((c) => (
         <button
           key={c.type}
@@ -22,10 +22,11 @@ export function CharmPalette({ onTapAdd }: Props) {
             e.dataTransfer.effectAllowed = 'copy'
           }}
           onClick={() => onTapAdd(c.type)}
-          className="group flex w-20 shrink-0 cursor-grab flex-col items-center gap-1 rounded-2xl border border-blush-200 bg-white/80 px-2 py-2 text-xs text-cocoa-600 shadow-sm transition hover:-translate-y-0.5 hover:border-rose-300 hover:shadow-md active:cursor-grabbing"
+          className="group flex cursor-grab flex-col items-center gap-1 rounded-2xl border border-blush-200 bg-white/80 px-2 py-2 text-xs text-cocoa-600 shadow-sm transition hover:-translate-y-0.5 hover:border-rose-300 hover:shadow-md active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600"
           title={`Drag ${c.label} onto the nail (or click to add)`}
+          aria-label={`Add ${c.label} to the nail`}
         >
-          <CharmIcon type={c.type} className="h-9 w-9 transition group-hover:scale-110" />
+          <CharmIcon type={c.type} className="h-9 w-9 transition motion-safe:group-hover:scale-110" />
           {c.label}
         </button>
       ))}
