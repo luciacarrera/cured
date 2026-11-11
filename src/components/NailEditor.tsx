@@ -3,15 +3,24 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { fingerInfo } from '../data/fingers'
 import { useDesign } from '../store/designStore'
 import type { NailBase } from '../three/loadNail'
-import { centerHit, viewRegistry, type ViewMode } from '../three/viewRegistry'
+import { centerHit, screenHit, type FixedView, type ViewMode } from '../three/viewRegistry'
 import type { CharmType, FingerId } from '../types'
 import { CharmControls } from './CharmControls'
 import { CHARM_MIME, CharmPalette } from './CharmPalette'
 import { ConfirmDialog } from './ConfirmDialog'
 import { HandsMiniIcon } from './HandsMiniIcon'
 import { NailScene } from './NailScene'
+import { ViewIcon } from './ViewIcon'
 
 const PANEL_KEY = 'cured-charm-panel-open'
+
+const VIEWS: { mode: ViewMode; title: string }[] = [
+  { mode: 'top', title: 'Top view' },
+  { mode: 'right', title: 'Right view' },
+  { mode: 'left', title: 'Left view' },
+  { mode: 'bottom', title: 'Bottom view' },
+  { mode: 'rotate', title: 'Rotate freely' },
+]
 const PANEL_ID = 'charms-panel'
 
 /** Open by default on wide screens, collapsed on phones; remembers the last choice. */
@@ -41,6 +50,13 @@ export function NailEditor({ finger, nail }: Props) {
   const [hint, setHint] = useState<string | null>(null)
   const [confirmClear, setConfirmClear] = useState(false)
   const [panelOpen, setPanelOpenState] = useState(initialPanelOpen)
+  const [view, setView] = useState<ViewMode>('top')
+  // Free rotation starts from whichever preset angle was showing last.
+  const [lastFixed, setLastFixed] = useState<FixedView>('top')
+  const chooseView = (mode: ViewMode) => {
+    setView(mode)
+    if (mode !== 'rotate') setLastFixed(mode)
+  }
 
   // When the user opens/closes the panel, move keyboard focus with it so it isn't lost.
   const openButtonRef = useRef<HTMLButtonElement>(null)
@@ -90,7 +106,7 @@ export function NailEditor({ finger, nail }: Props) {
         const type = e.dataTransfer.getData(CHARM_MIME) as CharmType
         if (!type) return
         e.preventDefault()
-        const hit = viewRegistry[mode]?.(e.clientX, e.clientY)
+        const hit = screenHit.fn?.(e.clientX, e.clientY)
         if (hit) addCharm(finger, type, hit.position, hit.normal)
         else flash('Drop the charm right on the nail')
       }}
@@ -103,7 +119,7 @@ export function NailEditor({ finger, nail }: Props) {
         onPointerMissed={() => useDesign.getState().selectCharm(null)}
         gl={{ antialias: true }}
       >
-        <NailScene finger={finger} nail={nail} mode={mode} />
+        <NailScene finger={finger} nail={nail} mode={mode} rotateFrom={lastFixed} />
       </Canvas>
       {overlay}
     </section>
@@ -163,6 +179,34 @@ export function NailEditor({ finger, nail }: Props) {
     </button>
   )
 
+  const viewButtons = (
+    <div
+      role="radiogroup"
+      aria-label="Camera view"
+      className="absolute left-3 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-1"
+    >
+      {VIEWS.map((v) => {
+        const active = v.mode === view
+        return (
+          <button
+            key={v.mode}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            aria-label={v.title}
+            title={v.title}
+            onClick={() => chooseView(v.mode)}
+            className={`flex h-11 w-11 items-center justify-center rounded-full text-navy-600 transition ${
+              active ? 'y2k-gloss' : 'hover:bg-white/70'
+            }`}
+          >
+            <ViewIcon mode={v.mode} className="h-6 w-6" />
+          </button>
+        )
+      })}
+    </div>
+  )
+
   return (
     <div className="flex h-full flex-col">
       <header className="flex flex-wrap items-center gap-3 px-4 pt-4 sm:px-6">
@@ -203,8 +247,14 @@ export function NailEditor({ finger, nail }: Props) {
       </header>
 
       <main className="relative flex min-h-0 flex-1 flex-col gap-3 p-4 sm:flex-row sm:px-6">
-        {pane('perspective', 'Perspective')}
-        {pane('top', 'Top view', charmsPanel)}
+        {pane(
+          view,
+          VIEWS.find((v) => v.mode === view)!.title,
+          <>
+            {viewButtons}
+            {charmsPanel}
+          </>,
+        )}
         {/* Always mounted so screen readers announce the hint when it appears. */}
         <div
           role="status"
