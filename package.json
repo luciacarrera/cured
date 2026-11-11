@@ -1,0 +1,32 @@
+{
+  "name": "cured",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "convert-nail": "node scripts/convert-3dm.mjs \"model of gel x tips.3dm\" public/models/nail.stl"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "three": "^0.180.0",
+    "zustand": "^5.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.180.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "rhino3dm": "^8.4.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "5.9",
+    "vite": "^7.3.8"
+  }
+}
