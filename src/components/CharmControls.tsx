@@ -15,6 +15,8 @@ export function CharmControls({ finger }: { finger: FingerId }) {
     if (!charm) return
     const onKey = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement) return
+      // A modal dialog owns the keyboard while it's open.
+      if (document.querySelector('dialog[open]')) return
       if (e.key === 'Delete' || e.key === 'Backspace') removeCharm(finger, charm.id)
       if (e.key === 'Escape') selectCharm(null)
     }
