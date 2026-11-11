@@ -33,10 +33,15 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
     <div className="flex h-full flex-col">
       <header className="flex items-start justify-between gap-4 px-4 pt-5 sm:px-6 sm:pt-6">
         <div>
-          <h1 className="font-display text-4xl leading-none font-medium italic tracking-tight text-cocoa-700 sm:text-5xl">
-            Cured
+          <h1 className="flex items-center gap-2 font-display text-4xl leading-none font-bold tracking-wide sm:text-5xl">
+            <span className="y2k-chrome-text" data-text="Cured">
+              Cured
+            </span>
+            <span className="sparkle text-xl" aria-hidden>
+              ✦
+            </span>
           </h1>
-          <p className="mt-1.5 text-lg text-cocoa-500 tabular-nums">{decorated}/10 nails done</p>
+          <p className="mt-1.5 font-pixel text-xl text-navy-500 tabular-nums">{decorated}/10 nails done</p>
         </div>
         <div className="flex flex-col items-end gap-1">
           <div className="flex items-center gap-1">
@@ -44,7 +49,7 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
               <button
                 type="button"
                 onClick={() => setConfirmReset(true)}
-                className="rounded-full px-3 py-2.5 text-sm text-cocoa-500 transition hover:bg-white/70 sm:px-4 sm:py-3"
+                className="rounded-full px-3 py-2.5 text-sm text-navy-500 transition hover:bg-white/70 sm:px-4 sm:py-3"
               >
                 Reset
               </button>
@@ -53,9 +58,9 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
               type="button"
               onClick={onExport}
               disabled={busy || !nail}
-              className="rounded-full bg-rose-400 px-4 py-2.5 text-sm font-medium whitespace-nowrap text-white shadow-lg shadow-rose-200 transition hover:bg-rose-500 disabled:opacity-50 sm:px-6 sm:py-3 sm:text-base"
+              className="y2k-gloss rounded-full px-4 py-2.5 font-display text-sm font-semibold whitespace-nowrap disabled:opacity-50 sm:px-6 sm:py-3 sm:text-base"
             >
-              {busy ? 'Preparing…' : 'Download set'}
+              <span className="y2k-chrome-label">{busy ? 'Preparing…' : 'Download set'}</span>
             </button>
           </div>
           {error && <p className="max-w-xs text-right text-sm text-rose-600">{error}</p>}
@@ -63,9 +68,7 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
       </header>
 
       {/* On phones the in-drawing hint would be too small, so show it as text instead. */}
-      <p className="mt-6 text-center font-display text-xl italic text-cocoa-500 sm:hidden">
-        Tap a nail to design
-      </p>
+      <p className="mt-6 text-center font-display text-xl text-navy-500 sm:hidden">Tap a nail to design</p>
 
       <div className="min-h-[320px] w-full flex-1">
         <HandsIllustration designs={designs} nail={nail} onSelect={openFinger} hint={['Tap a nail', 'to design']} />

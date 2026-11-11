@@ -22,7 +22,7 @@ export function CharmPalette({ onTapAdd }: Props) {
             e.dataTransfer.effectAllowed = 'copy'
           }}
           onClick={() => onTapAdd(c.type)}
-          className="group flex w-20 shrink-0 cursor-grab flex-col items-center gap-1 rounded-2xl border border-blush-200 bg-white/80 px-2 py-2 text-xs text-cocoa-600 shadow-sm transition hover:-translate-y-0.5 hover:border-rose-300 hover:shadow-md active:cursor-grabbing"
+          className="group flex w-20 shrink-0 cursor-grab flex-col items-center gap-1 y2k-glass rounded-2xl px-2 py-2 text-xs font-semibold text-navy-600 transition hover:-translate-y-0.5 hover:border-baby-400 hover:shadow-[0_0_0_3px_rgb(167_216_255_/_0.6)] active:cursor-grabbing"
           title={`Drag ${c.label} onto the nail (or click to add)`}
         >
           <CharmIcon type={c.type} className="h-9 w-9 transition group-hover:scale-110" />

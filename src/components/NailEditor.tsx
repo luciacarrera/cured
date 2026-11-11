@@ -38,7 +38,7 @@ export function NailEditor({ finger, nail }: Props) {
 
   const pane = (mode: ViewMode, title: string) => (
     <section
-      className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-blush-200 bg-gradient-to-b from-white to-blush-50 shadow-inner"
+      className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-chrome bg-gradient-to-b from-white to-baby-50 shadow-[inset_0_2px_12px_rgb(58_154_217_/_0.15)]"
       onDragOver={(e) => {
         if (e.dataTransfer.types.includes(CHARM_MIME)) {
           e.preventDefault()
@@ -54,7 +54,7 @@ export function NailEditor({ finger, nail }: Props) {
         else flash('Drop the charm right on the nail')
       }}
     >
-      <span className="pointer-events-none absolute left-4 top-3 z-10 text-xs font-medium uppercase tracking-[0.2em] text-cocoa-400">
+      <span className="pointer-events-none absolute left-4 top-3 z-10 font-pixel text-lg uppercase tracking-[0.2em] text-navy-400">
         {title}
       </span>
       <Canvas
@@ -73,18 +73,22 @@ export function NailEditor({ finger, nail }: Props) {
         <button
           type="button"
           onClick={backToHands}
-          className="rounded-full border border-blush-200 bg-white px-4 py-2 text-sm text-cocoa-600 shadow-sm transition hover:border-rose-300"
+          className="y2k-gloss rounded-full px-4 py-2 text-sm font-semibold"
         >
-          ← Back to hands
+          <span className="y2k-chrome-label">← Back to hands</span>
         </button>
-        <h2 className="font-display text-3xl capitalize text-cocoa-700">{info.label}</h2>
-        <div className="ml-auto flex items-center gap-3 text-sm text-cocoa-600">
+        <h2 className="font-display text-4xl font-bold capitalize tracking-wide">
+          <span className="y2k-chrome-text" data-text={info.label}>
+            {info.label}
+          </span>
+        </h2>
+        <div className="ml-auto flex items-center gap-3 text-sm text-navy-600">
           <label className="flex items-center gap-2">
             Tip size
             <select
               value={size}
               onChange={(e) => setSize(finger, Number(e.target.value))}
-              className="rounded-full border border-blush-200 bg-white px-3 py-1.5"
+              className="rounded-full border border-chrome bg-white px-3 py-1.5 text-navy-700"
             >
               {NAIL_SIZES.map((s, i) => (
                 <option key={i} value={i}>
@@ -97,7 +101,7 @@ export function NailEditor({ finger, nail }: Props) {
             <button
               type="button"
               onClick={() => setConfirmClear(true)}
-              className="rounded-full px-3 py-1.5 text-rose-500 transition hover:bg-rose-50"
+              className="rounded-full px-3 py-1.5 text-rose-600 transition hover:bg-rose-50"
             >
               Reset
             </button>
@@ -109,13 +113,13 @@ export function NailEditor({ finger, nail }: Props) {
         {pane('perspective', 'Perspective')}
         {pane('top', 'Top view')}
         {hint && (
-          <div className="pointer-events-none absolute left-1/2 top-8 -translate-x-1/2 rounded-full bg-cocoa-700/85 px-4 py-2 text-sm text-white">
+          <div className="pointer-events-none absolute left-1/2 top-8 -translate-x-1/2 rounded-full bg-navy-700/85 px-4 py-2 text-sm text-white">
             {hint}
           </div>
         )}
       </main>
 
-      <footer className="border-t border-blush-200 bg-white/60 backdrop-blur">
+      <footer className="y2k-glass border-x-0 border-b-0">
         <div className="px-4 pt-3">
           <CharmControls finger={finger} />
         </div>

@@ -41,26 +41,29 @@ export function ConfirmDialog({
       onClick={(e) => {
         if (e.target === e.currentTarget) onCancel()
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-3xl bg-transparent p-0 backdrop:bg-cocoa-700/40 backdrop:backdrop-blur-sm"
+      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-3xl bg-transparent p-0 backdrop:bg-navy-700/40 backdrop:backdrop-blur-sm"
     >
-      <div className="rounded-3xl border border-blush-200 bg-cream p-6 text-center shadow-xl">
-        <h2 id="confirm-dialog-title" className="font-display text-3xl text-cocoa-700">
-          {title}
+      <div className="y2k-glass rounded-3xl p-6 text-center shadow-xl">
+        <h2 id="confirm-dialog-title" className="font-display text-3xl font-bold tracking-wide">
+          <span className="y2k-chrome-text" data-text={title}>
+            {title}
+          </span>
         </h2>
-        <p className="mt-2 text-sm text-cocoa-500">{message}</p>
+        <p className="mt-2 text-sm text-navy-500">{message}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
             type="button"
             autoFocus
             onClick={onCancel}
-            className="rounded-full border border-blush-200 bg-white px-5 py-2.5 text-sm text-cocoa-600 shadow-sm transition hover:border-rose-300"
+            className="y2k-gloss rounded-full px-5 py-2.5 font-display text-sm font-semibold"
           >
-            {cancelLabel}
+            <span className="y2k-chrome-label">{cancelLabel}</span>
           </button>
+          {/* Destructive action stays red; rose-600 keeps white text at AA contrast. */}
           <button
             type="button"
             onClick={onConfirm}
-            className="rounded-full bg-rose-400 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-rose-200 transition hover:bg-rose-500"
+            className="rounded-full bg-rose-600 px-5 py-2.5 font-display text-sm font-semibold text-white shadow-lg shadow-rose-200 transition hover:bg-rose-700"
           >
             {confirmLabel}
           </button>
