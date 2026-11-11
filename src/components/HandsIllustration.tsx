@@ -129,7 +129,7 @@ export function HandsIllustration({ designs, nail, onSelect, hint }: Props) {
         <text
           textAnchor="middle"
           fontSize={20}
-          className="pointer-events-none fill-navy-500 font-display max-sm:hidden"
+          className="pointer-events-none fill-navy-500 font-pixel max-sm:hidden"
         >
           {hint.map((line, i) => (
             <tspan key={i} x={HINT_X} y={HINT_Y + i * HINT_LINE_HEIGHT}>
