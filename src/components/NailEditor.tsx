@@ -7,6 +7,7 @@ import { centerHit, viewRegistry, type ViewMode } from '../three/viewRegistry'
 import type { CharmType, FingerId } from '../types'
 import { CharmControls } from './CharmControls'
 import { CHARM_MIME, CharmPalette } from './CharmPalette'
+import { ConfirmDialog } from './ConfirmDialog'
 import { NailScene } from './NailScene'
 
 interface Props {
@@ -23,6 +24,7 @@ export function NailEditor({ finger, nail }: Props) {
   const clearFinger = useDesign((s) => s.clearFinger)
   const count = useDesign((s) => s.designs[finger].length)
   const [hint, setHint] = useState<string | null>(null)
+  const [confirmClear, setConfirmClear] = useState(false)
 
   const flash = (msg: string) => {
     setHint(msg)
@@ -94,7 +96,7 @@ export function NailEditor({ finger, nail }: Props) {
           {count > 0 && (
             <button
               type="button"
-              onClick={() => clearFinger(finger)}
+              onClick={() => setConfirmClear(true)}
               className="rounded-full px-3 py-1.5 text-rose-500 transition hover:bg-rose-50"
             >
               Clear nail
@@ -119,6 +121,18 @@ export function NailEditor({ finger, nail }: Props) {
         </div>
         <CharmPalette onTapAdd={tapAdd} />
       </footer>
+
+      <ConfirmDialog
+        open={confirmClear}
+        title="Clear this nail?"
+        message={`This removes ${count === 1 ? 'the 1 charm' : `all ${count} charms`} from your ${info.label.toLowerCase()} nail.`}
+        confirmLabel="Clear nail"
+        onConfirm={() => {
+          clearFinger(finger)
+          setConfirmClear(false)
+        }}
+        onCancel={() => setConfirmClear(false)}
+      />
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDesign } from '../store/designStore'
 import { exportStl } from '../three/exportStl'
 import type { NailBase } from '../three/loadNail'
+import { ConfirmDialog } from './ConfirmDialog'
 import { HandsIllustration } from './HandsIllustration'
 
 export function HandsScreen({ nail }: { nail: NailBase | null }) {
@@ -11,6 +12,7 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
   const clearAll = useDesign((s) => s.clearAll)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [confirmReset, setConfirmReset] = useState(false)
 
   const decorated = Object.values(designs).filter((d) => d.length > 0).length
   const totalCharms = Object.values(designs).reduce((n, d) => n + d.length, 0)
@@ -41,9 +43,7 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
             {totalCharms > 0 && (
               <button
                 type="button"
-                onClick={() => {
-                  if (confirm('Remove every charm from all ten nails?')) clearAll()
-                }}
+                onClick={() => setConfirmReset(true)}
                 className="rounded-full px-3 py-2.5 text-sm text-cocoa-500 transition hover:bg-white/70 sm:px-4 sm:py-3"
               >
                 Reset
@@ -70,6 +70,18 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
       <div className="min-h-[320px] w-full flex-1">
         <HandsIllustration designs={designs} nail={nail} onSelect={openFinger} hint={['Tap a nail', 'to design']} />
       </div>
+
+      <ConfirmDialog
+        open={confirmReset}
+        title="Reset all nails?"
+        message={`This removes ${totalCharms === 1 ? 'the 1 charm' : `all ${totalCharms} charms`} from all ten nails.`}
+        confirmLabel="Reset"
+        onConfirm={() => {
+          clearAll()
+          setConfirmReset(false)
+        }}
+        onCancel={() => setConfirmReset(false)}
+      />
     </div>
   )
 }
