@@ -29,44 +29,49 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-col items-center gap-2 px-6 pt-10 text-center">
-        <h1 className="flex items-center gap-3 font-display text-7xl font-bold tracking-tight">
-          <span className="sparkle text-3xl" aria-hidden>✦</span>
-          <span className="y2k-chrome-text" data-text="cured">cured</span>
-          <span className="sparkle text-2xl" aria-hidden>✧</span>
-        </h1>
-        <p className="max-w-md text-navy-500">
-          Tap a nail to decorate it. When every nail is done, export one print-ready STL.
-        </p>
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={onExport}
-            disabled={busy || !nail}
-            className="y2k-gloss rounded-full px-6 py-3 font-display font-semibold disabled:opacity-50"
-          >
-            <span className="y2k-chrome-label">{busy ? 'Building STL…' : 'Finish & export STL'}</span>
-          </button>
-          {totalCharms > 0 && (
+      <header className="flex items-start justify-between gap-4 px-4 pt-5 sm:px-6 sm:pt-6">
+        <div>
+          <h1 className="flex items-center gap-2 font-display text-4xl leading-none font-bold tracking-wide sm:text-5xl">
+            <span className="y2k-chrome-text" data-text="Cured">
+              Cured
+            </span>
+            <span className="sparkle text-xl" aria-hidden>
+              ✦
+            </span>
+          </h1>
+          <p className="mt-1.5 font-pixel text-xl text-navy-500 tabular-nums">{decorated}/10 nails done</p>
+        </div>
+        <div className="flex flex-col items-end gap-1">
+          <div className="flex items-center gap-1">
+            {totalCharms > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm('Remove every charm from all ten nails?')) clearAll()
+                }}
+                className="rounded-full px-3 py-2.5 text-sm text-navy-500 transition hover:bg-white/70 sm:px-4 sm:py-3"
+              >
+                Reset
+              </button>
+            )}
             <button
               type="button"
-              onClick={() => {
-                if (confirm('Remove every charm from all ten nails?')) clearAll()
-              }}
-              className="rounded-full px-4 py-3 text-sm text-navy-500 transition hover:bg-white/70"
+              onClick={onExport}
+              disabled={busy || !nail}
+              className="y2k-gloss rounded-full px-4 py-2.5 font-display text-sm font-semibold whitespace-nowrap disabled:opacity-50 sm:px-6 sm:py-3 sm:text-base"
             >
-              Start over
+              <span className="y2k-chrome-label">{busy ? 'Preparing…' : 'Download set'}</span>
             </button>
-          )}
+          </div>
+          {error && <p className="max-w-xs text-right text-sm text-rose-600">{error}</p>}
         </div>
-        <p className="font-pixel text-xl tracking-wide text-navy-400">
-          {decorated} of 10 nails decorated · {totalCharms} charm{totalCharms === 1 ? '' : 's'}
-        </p>
-        {error && <p className="text-sm text-rose-600">{error}</p>}
       </header>
 
-      <div className="mt-auto h-[62vh] min-h-[320px] w-full">
-        <HandsIllustration designs={designs} nail={nail} onSelect={openFinger} />
+      {/* On phones the in-drawing hint would be too small, so show it as text instead. */}
+      <p className="mt-6 text-center font-display text-xl text-navy-500 sm:hidden">Tap a nail to design</p>
+
+      <div className="min-h-[320px] w-full flex-1">
+        <HandsIllustration designs={designs} nail={nail} onSelect={openFinger} hint={['Tap a nail', 'to design']} />
       </div>
     </div>
   )
