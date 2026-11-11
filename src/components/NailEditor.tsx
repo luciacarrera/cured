@@ -99,7 +99,7 @@ export function NailEditor({ finger, nail }: Props) {
               onClick={() => setConfirmClear(true)}
               className="rounded-full px-3 py-1.5 text-rose-500 transition hover:bg-rose-50"
             >
-              Clear nail
+              Reset
             </button>
           )}
         </div>
@@ -124,9 +124,9 @@ export function NailEditor({ finger, nail }: Props) {
 
       <ConfirmDialog
         open={confirmClear}
-        title="Clear this nail?"
+        title="Reset this nail?"
         message={`This removes ${count === 1 ? 'the 1 charm' : `all ${count} charms`} from your ${info.label.toLowerCase()} nail.`}
-        confirmLabel="Clear nail"
+        confirmLabel="Reset"
         onConfirm={() => {
           clearFinger(finger)
           setConfirmClear(false)
