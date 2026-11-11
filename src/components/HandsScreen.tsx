@@ -68,7 +68,7 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
       </header>
 
       {/* On phones the in-drawing hint would be too small, so show it as text instead. */}
-      <p className="mt-6 text-center font-display text-xl text-navy-500 sm:hidden">Tap a nail to design</p>
+      <p className="mt-6 text-center font-pixel text-xl text-navy-500 sm:hidden">Tap a nail to design</p>
 
       <div className="min-h-[320px] w-full flex-1">
         <HandsIllustration designs={designs} nail={nail} onSelect={openFinger} hint={['Tap a nail', 'to design']} />
