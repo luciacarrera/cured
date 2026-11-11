@@ -40,6 +40,50 @@ function fingerPath(w: number, L: number) {
   return `M ${-w / 2} 24 L ${-t} ${-L + t} A ${t} ${t} 0 0 1 ${t} ${-L + t} L ${w / 2} 24 Z`
 }
 
+const CREASE = '#c99a86'
+
+/**
+ * Middle (proximal inter-phalangeal) joint on the back of the finger: a soft
+ * shadow with a few uneven wrinkle lines, rather than one hard stroke.
+ */
+function PipFold({ w, y }: { w: number; y: number }) {
+  const line = (x0: number, x1: number, dy: number, bow: number, opacity: number, width: number) => (
+    <path
+      d={`M ${w * x0} ${y + dy} Q ${(w * (x0 + x1)) / 2} ${y + dy + bow} ${w * x1} ${y + dy}`}
+      stroke={CREASE}
+      strokeOpacity={opacity}
+      strokeWidth={width}
+      strokeLinecap="round"
+      fill="none"
+    />
+  )
+  return (
+    <g>
+      <ellipse cx={0} cy={y + 1} rx={w * 0.36} ry={7} fill="url(#joint-shade)" />
+      {line(-0.15, 0.13, -3.6, -1.2, 0.28, 0.9)}
+      {line(-0.27, 0.25, 0, 2.6, 0.42, 1.1)}
+      {line(-0.19, 0.17, 3.4, 2, 0.28, 0.9)}
+    </g>
+  )
+}
+
+/** Knuckle at the base of the finger: a raised highlight with a faint shadow below it. */
+function Knuckle({ w }: { w: number }) {
+  return (
+    <g>
+      <ellipse cx={0} cy={2} rx={w * 0.42} ry={w * 0.28} fill="url(#knuckle-light)" />
+      <path
+        d={`M ${-w * 0.3} ${w * 0.26} Q 0 ${w * 0.26 + 5} ${w * 0.3} ${w * 0.26}`}
+        stroke={CREASE}
+        strokeOpacity={0.22}
+        strokeWidth={1.3}
+        strokeLinecap="round"
+        fill="none"
+      />
+    </g>
+  )
+}
+
 interface NailShape {
   path: string
   /** Cuticle y, free-edge y, half-widths at cuticle / free edge. */
@@ -53,8 +97,8 @@ function nailShape(w: number, L: number): NailShape {
   const t = w * 0.43
   const hw0 = t * 0.78
   const hw1 = t * 0.92
-  const y0 = -L + L * 0.34
-  const y1 = -L - L * 0.32
+  const y0 = -L + L * 0.18
+  const y1 = -L - L * 0.48
   const r = hw1 * 0.75
   const path =
     `M ${-hw0} ${y0 - 3} Q 0 ${y0 + 8} ${hw0} ${y0 - 3} ` +
@@ -75,9 +119,15 @@ interface Props {
   designs: Record<FingerId, PlacedCharm[]>
   nail: NailBase | null
   onSelect: (id: FingerId) => void
+  /** Lines of text drawn between the hands (hidden on small screens, where it would be tiny). */
+  hint?: string[]
 }
 
-export function HandsIllustration({ designs, nail, onSelect }: Props) {
+// Between the index-finger tips, where the gap is widest.
+const HINT_Y = -282
+const HINT_LINE_HEIGHT = 25
+
+export function HandsIllustration({ designs, nail, onSelect, hint }: Props) {
   const [hover, setHover] = useState<FingerId | null>(null)
 
   const renderHand = (hand: Hand) => {
@@ -104,21 +154,23 @@ export function HandsIllustration({ designs, nail, onSelect }: Props) {
               aria-label={`Design ${hand} ${f.name} nail`}
             >
               <path d={fingerPath(f.width, f.length)} fill={SKIN} />
-              {/* knuckle creases */}
-              <path
-                d={`M ${-f.width * 0.25} ${-f.length * 0.42} q ${f.width * 0.25} 3 ${f.width * 0.5} 0`}
-                stroke="#c99a86"
-                strokeOpacity={0.45}
-                strokeWidth={1.2}
-                fill="none"
-              />
-              <path
-                d={`M ${-f.width * 0.22} ${-f.length * 0.1} q ${f.width * 0.22} 3 ${f.width * 0.44} 0`}
-                stroke="#c99a86"
-                strokeOpacity={0.35}
-                strokeWidth={1.2}
-                fill="none"
-              />
+              {f.name === 'thumb' ? (
+                // The thumb has only two bones, so one fold between knuckle and nail.
+                <PipFold w={f.width} y={-f.length * 0.55} />
+              ) : (
+                <>
+                  {/* top joint, just below the nail */}
+                  <path
+                    d={`M ${-f.width * 0.21} ${-f.length * 0.68} q ${f.width * 0.21} 2.5 ${f.width * 0.42} 0`}
+                    stroke={CREASE}
+                    strokeOpacity={0.45}
+                    strokeWidth={1.2}
+                    fill="none"
+                  />
+                  <PipFold w={f.width} y={-f.length * 0.42} />
+                </>
+              )}
+              <Knuckle w={f.width} />
               <path
                 d={nailS.path}
                 fill="url(#nail)"
@@ -158,18 +210,39 @@ export function HandsIllustration({ designs, nail, onSelect }: Props) {
   }
 
   return (
-    <svg viewBox="-470 -400 940 440" className="h-full w-full" preserveAspectRatio="xMidYMax meet">
+    <svg viewBox="-470 -400 940 380" className="h-full w-full" preserveAspectRatio="xMidYMax meet">
       <defs>
         <linearGradient id="nail" x1="0" y1="1" x2="0" y2="0">
           <stop offset="0" stopColor="#f7d9d4" />
           <stop offset="1" stopColor="#fdf1ee" />
         </linearGradient>
+        <radialGradient id="joint-shade">
+          <stop offset="0" stopColor="#d9a28d" stopOpacity="0.35" />
+          <stop offset="1" stopColor="#d9a28d" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="knuckle-light" cy="0.4">
+          <stop offset="0" stopColor="#f5d3c3" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#f5d3c3" stopOpacity="0" />
+        </radialGradient>
         <filter id="hand-shadow" x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#a0685a" floodOpacity="0.18" />
         </filter>
       </defs>
       {renderHand('left')}
       {renderHand('right')}
+      {hint && (
+        <text
+          textAnchor="middle"
+          fontSize={22}
+          className="pointer-events-none fill-cocoa-500 font-display italic max-sm:hidden"
+        >
+          {hint.map((line, i) => (
+            <tspan key={i} x={0} y={HINT_Y + i * HINT_LINE_HEIGHT}>
+              {line}
+            </tspan>
+          ))}
+        </text>
+      )}
     </svg>
   )
 }
