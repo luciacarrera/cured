@@ -23,4 +23,15 @@ export interface PlacedCharm {
   scale: number
 }
 
-export type View = 'hands' | 'editor'
+export type View = 'sets' | 'hands' | 'editor'
+
+/** One full set of ten press-ons, saved in the library. */
+export interface NailSet {
+  id: string
+  name: string
+  createdAt: number
+  updatedAt: number
+  designs: Record<FingerId, PlacedCharm[]>
+  sizes: Record<FingerId, number>
+  saved: Record<FingerId, boolean>
+}
