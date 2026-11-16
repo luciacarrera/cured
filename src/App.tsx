@@ -2,12 +2,14 @@ import { HandsScreen } from './components/HandsScreen'
 import { LoadingScreen } from './components/LoadingScreen'
 import { useAppReady } from './hooks/useAppReady'
 import { NailEditor } from './components/NailEditor'
+import { SetsScreen } from './components/SetsScreen'
 import { useDesign } from './store/designStore'
 import { useNail } from './three/loadNail'
 
 export default function App() {
   const view = useDesign((s) => s.view)
   const activeFinger = useDesign((s) => s.activeFinger)
+  const hasSet = useDesign((s) => s.activeSetId !== null && s.sets[s.activeSetId] !== undefined)
   const { nail, error } = useNail()
   const ready = useAppReady(nail !== null || error !== null)
 
@@ -19,7 +21,9 @@ export default function App() {
           {error}. Run <code>npm run convert-nail</code> or put your STL at public/models/nail.stl.
         </div>
       )}
-      {view === 'editor' && activeFinger && nail ? (
+      {view === 'sets' || !hasSet ? (
+        <SetsScreen nail={nail} />
+      ) : view === 'editor' && activeFinger && nail ? (
         <NailEditor finger={activeFinger} nail={nail} />
       ) : (
         <HandsScreen nail={nail} />

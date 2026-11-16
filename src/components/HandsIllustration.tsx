@@ -19,7 +19,7 @@ const HIT_PAD_Y = 9
  * Map a charm's base-nail position onto the nail ellipse, in nail-local
  * coordinates (y up the nail toward the free edge, x across it).
  */
-function previewPoint(c: PlacedCharm, s: NailSpot, nail: NailBase) {
+export function previewPoint(c: PlacedCharm, s: NailSpot, nail: NailBase) {
   const v = (nail.length / 2 - c.position[2]) / nail.length // 0 at cuticle, 1 at free edge
   const u = c.position[0] / (nail.width / 2) // -1..1, same direction as the editor top view
   const y = s.ry * (1 - 2 * v) * 0.85

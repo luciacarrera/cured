@@ -43,6 +43,12 @@ export async function buildPlate(
   return merge(parts)
 }
 
+/** "Chrome hearts" -> "chrome-hearts.stl". */
+export function stlFileName(setName: string) {
+  const slug = setName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  return `${slug || 'cured-nails'}.stl`
+}
+
 /** Export the plate as a binary STL (Z-up, mm) and trigger a download. */
 export async function exportStl(
   designs: Record<FingerId, PlacedCharm[]>,

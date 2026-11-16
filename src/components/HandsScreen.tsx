@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useDesign } from '../store/designStore'
-import { exportStl } from '../three/exportStl'
+import { exportStl, stlFileName } from '../three/exportStl'
 import type { NailBase } from '../three/loadNail'
 import { ConfirmDialog } from './ConfirmDialog'
 import { HandsIllustration } from './HandsIllustration'
@@ -10,6 +10,8 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
   const sizes = useDesign((s) => s.sizes)
   const openFinger = useDesign((s) => s.openFinger)
   const clearAll = useDesign((s) => s.clearAll)
+  const backToSets = useDesign((s) => s.backToSets)
+  const setName = useDesign((s) => (s.activeSetId ? s.sets[s.activeSetId]?.name : undefined) ?? 'Untitled set')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [confirmReset, setConfirmReset] = useState(false)
@@ -21,7 +23,7 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
     setBusy(true)
     setError(null)
     try {
-      await exportStl(designs, sizes)
+      await exportStl(designs, sizes, stlFileName(setName))
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -32,10 +34,17 @@ export function HandsScreen({ nail }: { nail: NailBase | null }) {
   return (
     <div className="flex h-full flex-col">
       <header className="flex items-start justify-between gap-4 px-4 pt-5 sm:px-6 sm:pt-6">
-        <div>
-          <h1 className="flex items-center gap-2 font-display text-4xl leading-none font-bold tracking-wide sm:text-5xl">
-            <span className="y2k-chrome-text" data-text="Cured">
-              Cured
+        <div className="min-w-0">
+          <button
+            type="button"
+            onClick={backToSets}
+            className="-ml-2 mb-1 rounded-full px-2 py-1 font-pixel text-xl leading-none text-navy-500 transition hover:bg-white/70"
+          >
+            ‹ Your sets
+          </button>
+          <h1 className="flex min-w-0 items-center gap-2 font-display text-2xl leading-tight font-bold tracking-wide sm:text-5xl sm:leading-none">
+            <span className="y2k-chrome-text" data-text={setName}>
+              {setName}
             </span>
             <span className="sparkle text-xl" aria-hidden>
               ✦
