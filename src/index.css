@@ -152,3 +152,42 @@ body {
     animation-delay: 1.2s;
   }
 }
+
+/* Loading screen: stars drift (outer span) and twinkle (inner span) — two
+ * elements so the two transforms don't override each other. */
+.loading-star {
+  display: inline-block;
+}
+.loading-star-baby {
+  color: var(--color-baby-400);
+  text-shadow: 0 0 10px rgb(167 216 255 / 0.9);
+}
+.loading-star-periwinkle {
+  color: var(--color-periwinkle);
+  text-shadow: 0 0 10px rgb(184 184 255 / 0.9);
+}
+.loading-star-white {
+  color: #ffffff;
+  text-shadow: 0 0 6px var(--color-baby-300), 0 0 14px rgb(167 216 255 / 0.9);
+}
+@keyframes float-drift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(10px, -14px); }
+  50% { transform: translate(-6px, -24px); }
+  75% { transform: translate(-12px, -8px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .loading-star-drift {
+    animation: float-drift 8s ease-in-out infinite;
+  }
+  .loading-star {
+    animation: twinkle 2.8s ease-in-out infinite;
+  }
+  .loading-screen {
+    transition: opacity 400ms ease-out;
+  }
+}
+.loading-fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
