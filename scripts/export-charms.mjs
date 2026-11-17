@@ -1,6 +1,6 @@
 // Exports every charm in src/three/charms.ts as its own binary STL (mm, Z-up),
 // so each one can be printed, inspected or imported into Rhino on its own.
-// Usage: node scripts/export-charms.mjs [outDir]   (default: public/models/charms)
+// Usage: node scripts/export-charms.mjs [outDir]   (default: charm-stls, git-ignored, not served)
 // Vite's SSR loader is used so the TypeScript charm library loads unchanged.
 import fs from 'node:fs'
 import path from 'node:path'
@@ -8,7 +8,7 @@ import { createServer } from 'vite'
 import * as THREE from 'three'
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js'
 
-const outDir = process.argv[2] ?? 'public/models/charms'
+const outDir = process.argv[2] ?? 'charm-stls'
 fs.mkdirSync(outDir, { recursive: true })
 
 const server = await createServer({
