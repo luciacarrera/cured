@@ -2,3 +2,4 @@ node_modules
 dist
 *.3dmbak
 *.local
+charm-stls

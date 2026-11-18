@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "convert-nail": "node scripts/convert-3dm.mjs \"model of gel x tips.3dm\" public/models/nail.stl"
+    "convert-nail": "node scripts/convert-3dm.mjs \"model of gel x tips.3dm\" public/models/nail.stl",
+    "export-charms": "node scripts/export-charms.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
