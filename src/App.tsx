@@ -1,4 +1,6 @@
 import { HandsScreen } from './components/HandsScreen'
+import { LoadingScreen } from './components/LoadingScreen'
+import { useAppReady } from './hooks/useAppReady'
 import { NailEditor } from './components/NailEditor'
 import { SetsScreen } from './components/SetsScreen'
 import { useDesign } from './store/designStore'
@@ -9,9 +11,11 @@ export default function App() {
   const activeFinger = useDesign((s) => s.activeFinger)
   const hasSet = useDesign((s) => s.activeSetId !== null && s.sets[s.activeSetId] !== undefined)
   const { nail, error } = useNail()
+  const ready = useAppReady(nail !== null || error !== null)
 
   return (
     <div className="h-dvh w-full overflow-hidden y2k-backdrop">
+      <LoadingScreen leaving={ready} />
       {error && (
         <div className="absolute inset-x-0 top-0 z-20 bg-rose-100 px-4 py-2 text-center text-sm text-rose-700">
           {error}. Run <code>npm run convert-nail</code> or put your STL at public/models/nail.stl.
